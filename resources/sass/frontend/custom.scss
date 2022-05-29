@@ -1,0 +1,133 @@
+.h-100-vh{
+  height: 100vh;
+}
+.h-90-vh {
+  height: 90vh;
+}
+h3{
+  font-size: 20px !important;
+  font-weight: bold !important;
+}
+.input-quiz{
+  font-size: 18px !important;
+  padding: 30px 15px !important;
+}
+.btn{
+  font-size: 20px !important;
+}
+.body-quiz{
+  background: rgb(226, 230, 255);
+  background: linear-gradient(0deg, rgb(239, 242, 255) 0%, rgba(255, 255, 255, 1) 100%);
+}
+.footer-game{
+  z-index: 10;
+}
+.text-error{
+  margin-top: 0.25rem;
+  font-size: 0.875em;
+  color: #dc3545;
+}
+.bg-pink{
+  background-color: #fde0ff;
+}
+.btn-pink{
+  background-color: #D24ADD;
+  color: #ffffff;
+}
+.btn-pink:hover, .btn-pink:focus {
+  background-color: #b63cbf !important;
+  color: #ffffff;
+}
+.left-0{
+  left: 0;
+}
+.right-0{
+  right: 0;
+}
+
+/*loading*/
+.lds-ring {
+  display: inline-block;
+  position: relative;
+  width: 3px;
+  height: 24px;
+}
+.lds-ring div {
+  box-sizing: border-box;
+  display: block;
+  position: absolute;
+  width: 20px;
+  height: 20px;
+  margin: 8px;
+  border: 2px solid #687BEC;
+  border-radius: 50%;
+  animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+  border-color: #687BEC transparent transparent transparent;
+}
+.lds-ring div:nth-child(1) {
+  animation-delay: -0.45s;
+}
+.lds-ring div:nth-child(2) {
+  animation-delay: -0.3s;
+}
+.lds-ring div:nth-child(3) {
+  animation-delay: -0.15s;
+}
+@keyframes lds-ring {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+/*loading*/
+
+/*quiz*/
+.btn-option-1{
+  background-color: #3B52DC;
+  color: #ffffff;
+  font-size: 30px !important;
+}
+.btn-option-1:hover, .btn-option-1:focus {
+  background-color: #2941c4 !important;
+  color: #ffffff;
+  font-size: 30px !important;
+}
+.btn-option-2 {
+  background-color: #3143B0;
+  color: #ffffff;
+  font-size: 30px !important;
+}
+.btn-option-2:hover, .btn-option-2:focus {
+  background-color: #28399c !important;
+  color: #ffffff;
+  font-size: 30px !important;
+}
+.btn-option-3 {
+  background-color: #3B53BA;
+  color: #ffffff;
+  font-size: 30px !important;
+}
+.btn-option-3:hover, .btn-option-3:focus {
+  background-color: #3046a5 !important;
+  color: #ffffff;
+  font-size: 30px !important;
+}
+.btn-option-4 {
+  background-color: #1E3683;
+  color: #ffffff;
+  font-size: 30px !important;
+}
+.btn-option-4:hover, .btn-option-4:focus {
+  background-color: #192e72 !important;
+  color: #ffffff;
+  font-size: 30px !important;
+}
+.step {
+  display: none;
+}
+.step.active {
+  display: flex;
+}
+/*quiz*/
