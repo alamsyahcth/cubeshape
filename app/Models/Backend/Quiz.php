@@ -16,8 +16,10 @@ class Quiz extends Model
         'name',
         'description',
         'status',
+        'pin',
         'time',
-        'pin'
+        'second',
+        'time'
     ];
 
     public function user() {

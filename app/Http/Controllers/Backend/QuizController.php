@@ -43,13 +43,14 @@ class QuizController extends Controller {
                 $data->minute = $request->quizTimeMinute;
                 $data->second = $request->quizTimeSecond;
                 $data->pin = $this->generatePin();
+                $data->time = Carbon::now();
                 $data->save();
                 DB::commit();
                 notify()->success('Quiz has been created');
                 return redirect($this->role.'/'.$this->path);
             } catch (\Exception $err) {
                 DB::rollback();
-                notify()->error('Quiz cant created');
+                notify()->error($err);
                 return redirect($this->role.'/'.$this->path);
             }
         }
@@ -165,7 +166,8 @@ class QuizController extends Controller {
 
     public function start($id) {
         $data = Quiz::where('id', Crypt::decryptString($id))->update([
-            'status' => 3
+            'status' => 3,
+            'time' => Carbon::now()
         ]);
         if($data) {
             return $this->startQuiz($id);

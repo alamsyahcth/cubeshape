@@ -18,7 +18,7 @@ function startTimer(duration, display) {
 }
 
 jQuery(function ($) {
-  var fiveMinutes = 60 * 5,
+  var fiveMinutes = $('#limitTime').val(),
   display = $('#time');
   startTimer(fiveMinutes, display);
 });
@@ -27,7 +27,7 @@ function quizStep() {
   var index = $(".step.active").index(".step"),
     stepsCount = $(".step").length,
     prevBtn = $(".prev"),
-    nextBtn = $(".next");
+    nextBtn = $(".next"),
     activeCount = 1;
 
   prevBtn.click(function () {
@@ -61,6 +61,10 @@ function quizStep() {
 
     $('.activeIndex').html(activeCount + index);
     $('.countIndex').html(stepsCount);
+
+    if (index === stepsCount -1) {
+      $('#quizSubmit').modal('show');
+    }
   });
 
   $('.activeIndex').html(activeCount);
@@ -130,6 +134,21 @@ function handleCopyPIN() {
   });
 }
 
+function actionSubmitQuiz() {
+  let values = {}
+  $('.step').each(function(index) {
+    $(`input:radio[name='option-${index}']`).each(function() {
+      console.log($(this).filter(":checked").val());
+    });
+  });
+}
+
+function submitQuiz() {
+  $('#submitQuiz').on('click', function() {
+    actionSubmitQuiz();
+  });
+}
+
 $(document).ready(function () {
   $('.step-1').addClass('active');
   $('.dataTable').DataTable();
@@ -137,4 +156,5 @@ $(document).ready(function () {
   closeModal();
   handleOption();
   handleCopyPIN();
+  submitQuiz();
 });

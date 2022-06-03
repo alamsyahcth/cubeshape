@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Frontend;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Str;
 use App\Models\Player;
 use App\Models\Backend\Quiz;
 use Session;
@@ -13,7 +14,11 @@ use DB;
 class RegisterUserController extends Controller {
     
     public function index() {
-        return view('frontend.register-user.index');
+        if (Session::get('token') != null) {
+            return redirect('/waiting-game');
+        } else {
+            return view('frontend.register-user.index');
+        }
     }
 
     public function enterPin(Request $request) {
@@ -39,7 +44,11 @@ class RegisterUserController extends Controller {
     }
 
     public function enterName() {
-        return view('frontend.enter-username.index');
+        if (Session::get('token') != null) {
+            return redirect('/waiting-game');
+        } else {
+            return view('frontend.enter-username.index');
+        }
     }
 
     public function registerPlayer(Request $request) {
@@ -63,6 +72,8 @@ class RegisterUserController extends Controller {
                 $data->status = 0;
                 $data->save();
                 DB::commit();
+                Session::put('idPlayer', $data->id);
+                Session::put('token', Str::random(32));
                 return redirect('waiting-game');
             } catch (\Exception $err) {
                 DB::rollback();
@@ -73,8 +84,12 @@ class RegisterUserController extends Controller {
     }
 
     public function waitingGame() {
-        $data = Quiz::where('id', Crypt::decryptString(Session::get('quizId')))->first();
-        return view('frontend.waiting-game.index', compact('data'));
+        if (Session::get('token') == null) {
+            return redirect('/');
+        } else {
+            $data = Quiz::where('id', Crypt::decryptString(Session::get('quizId')))->first();
+            return view('frontend.waiting-game.index', compact('data'));
+        }
     }
 
 }
