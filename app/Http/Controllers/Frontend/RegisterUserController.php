@@ -34,6 +34,7 @@ class RegisterUserController extends Controller {
                 $data = $global->first();
                 Session::put('quizId', Crypt::encryptString($data->id));
                 Session::put('quizName', $data->name);
+                Session::put('quizPIN', Crypt::encryptString($data->pin));
                 notify()->success('Yeayy, Your PIN is correct');
                 return redirect('enter-name');
             } else {
@@ -84,7 +85,7 @@ class RegisterUserController extends Controller {
     }
 
     public function waitingGame() {
-        if (Session::get('token') == null) {
+        if (Session::get('token') == null && Session::get('idPlayer') == null) {
             return redirect('/');
         } else {
             $data = Quiz::where('id', Crypt::decryptString(Session::get('quizId')))->first();

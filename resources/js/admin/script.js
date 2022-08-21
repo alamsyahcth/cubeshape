@@ -2,7 +2,9 @@ let BASE_URL = window.location.origin;
 
 function startTimer(duration, display) {
   var timer = duration, minutes, seconds;
-  setInterval(function () {
+  let interval;
+
+  interval = setInterval(function () {
     minutes = parseInt(timer / 60, 10)
     seconds = parseInt(timer % 60, 10);
 
@@ -12,6 +14,8 @@ function startTimer(duration, display) {
     display.text(minutes + ":" + seconds);
 
     if (--timer < 0) {
+      actionSubmitQuiz();
+      clearInterval(interval);
       timer = 0;
     }
   }, 1000);
@@ -29,6 +33,7 @@ function quizStep() {
     prevBtn = $(".prev"),
     nextBtn = $(".next"),
     activeCount = 1;
+    flag = 1;
 
   prevBtn.click(function () {
     nextBtn.prop("disabled", false);
@@ -42,6 +47,8 @@ function quizStep() {
       $(this).prop("disabled", true);
     }
 
+    flag = flag - 1;
+
     $('.activeIndex').html(activeCount + index);
     $('.countIndex').html(stepsCount);
 
@@ -52,6 +59,9 @@ function quizStep() {
 
     if (index < stepsCount - 1) {
       index++;
+      let chooseAnswer = $('.next.next-' + index).find('input').attr('name');
+      let dataOption = $(this).data('id');
+      localStorage.setItem(chooseAnswer, dataOption);
       $(".step").removeClass("active").eq(index).addClass("active");
     };
 
@@ -59,16 +69,30 @@ function quizStep() {
       $(this).prop("disabled", true);
     }
 
+    if (flag > stepsCount) {
+      flag = stepsCount + 1;
+    } else {
+      flag++;
+    }
+
     $('.activeIndex').html(activeCount + index);
     $('.countIndex').html(stepsCount);
 
-    if (index === stepsCount -1) {
+    if (flag > stepsCount) {
       $('#quizSubmit').modal('show');
     }
+    // console.log(`activeCount = ${activeCount}, stepCount = ${stepsCount}, and index = ${index}, flag = ${flag}`);
   });
 
   $('.activeIndex').html(activeCount);
   $('.countIndex').html(stepsCount);
+}
+
+function setActiveAnswer() {
+  $('.step').each(function (index) {
+    let dataAnswer = localStorage.getItem('option-' + index);
+    $('#' + dataAnswer).prop('checked', true);
+  });
 }
 
 function closeModal() {
@@ -135,17 +159,64 @@ function handleCopyPIN() {
 }
 
 function actionSubmitQuiz() {
-  let values = {}
+  let values = 0;
+  let add = 0;
+  
+  let ipAddress = '127.0.0.1';
+  let socketPort = '3000';
+  let socket = io(ipAddress + ':' + socketPort);
+
   $('.step').each(function(index) {
-    $(`input:radio[name='option-${index}']`).each(function() {
-      console.log($(this).filter(":checked").val());
-    });
+    if (Number.isNaN(parseInt($(`input:radio[name='option-${index}']:checked`).val()))) {
+      add = 0;
+    } else {
+      add = parseInt($(`input:radio[name='option-${index}']:checked`).val());
+    }
+    values = values + add;
+  });
+
+  $.ajaxSetup({
+    headers: {
+      'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+    }
+  });
+
+  $.ajax({
+    type: 'post',
+    url: BASE_URL + '/store-question',
+    data: {
+      score: values
+    }, success: function(res) {
+      $('.step').each(function (index) {
+        localStorage.removeItem('option-' + index);
+      });
+      window.location.replace(`${BASE_URL}/result`);
+    }
   });
 }
 
 function submitQuiz() {
   $('#submitQuiz').on('click', function() {
     actionSubmitQuiz();
+  });
+}
+
+function socket() {
+  let ipAddress = '127.0.0.1';
+  let socketPort = '3000';
+  let socket = io(ipAddress +':'+ socketPort);
+
+  $(document).on('click', '#startQuiz', function(e) {
+    e.preventDefault();
+    socket.emit('setActiveQuizServer', 'start quiz active');
+    window.location.replace($(this).data('url'));
+  });
+
+  socket.on('setActiveQuizClient', (message) => {
+    $('#start-quiz-waiting').removeClass('d-block');
+    $('#start-quiz-waiting').addClass('d-none');
+    $('#start-quiz-show').removeClass('d-none');
+    $('#start-quiz-show').addClass('d-block');
   });
 }
 
@@ -157,4 +228,6 @@ $(document).ready(function () {
   handleOption();
   handleCopyPIN();
   submitQuiz();
+  setActiveAnswer();
+  socket();
 });

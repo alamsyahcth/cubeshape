@@ -31,9 +31,9 @@
     @foreach($getQuestionOption as $questionOption => $o)
       @if($q->id == $o->question_id)
         <div class="col-md-6 p-2">
-          <div class="btn btn-option btn-option-1 btn-lg btn-block">
+          <div class="btn btn-option btn-option-1 btn-lg btn-block next next-{{ $questions + 1 }}" data-id="option-{{ $questions }}-{{ $questionOption }}">
             <input type="radio" name="option-{{ $questions }}" id="option-{{ $questions }}-{{ $questionOption }}" class="input-quiz-value" value="{{ $o->is_true }}">
-            <label for="option-{{ $questions }}-{{ $questionOption }}" class="my-auto next">{{ $o->option }}</label>
+            <label for="option-{{ $questions }}-{{ $questionOption }}" class="my-auto">{{ $o->option }}</label>
           </div>
         </div>
       @endif

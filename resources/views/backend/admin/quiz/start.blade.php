@@ -31,7 +31,7 @@
             </div>
             <div class="col-md-6">
               @if($data->status == 2)
-                <a href="{{ url('admin/'.$page.'/start-quiz/'.Crypt::encryptString($data->id)) }}" class="btn btn-success btn-start w-100 h-100 d-flex justify-content-center align-items-center"><i class="fas fa-play mx-3"></i>START</a>
+                <a href="javascript:void(0)" id="startQuiz" data-url="{{ url('admin/'.$page.'/start-quiz/'.Crypt::encryptString($data->id)) }}" class="btn btn-success btn-start w-100 h-100 d-flex justify-content-center align-items-center"><i class="fas fa-play mx-3"></i>START</a>
               @elseif($data->status == 3)
                 <a href="{{ url('admin/'.$page.'/stop-quiz/'.Crypt::encryptString($data->id)) }}" class="btn btn-danger btn-start w-100 h-100 d-flex justify-content-center align-items-center"><i class="fas fa-stop mx-3"></i>STOP</a>
               @endif

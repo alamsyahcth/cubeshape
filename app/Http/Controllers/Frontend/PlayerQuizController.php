@@ -9,12 +9,13 @@ use Carbon\Carbon;
 use App\Models\Backend\Quiz;
 use App\Models\Backend\Question;
 use App\Models\Backend\QuestionOption;
+use App\Models\Player;
 use Session;
 
 class PlayerQuizController extends Controller {
     
     public function index() {
-        if (Session::get('token') == null) {
+        if (Session::get('token') == null && Session::get('idPlayer')) {
             return redirect('/');
         }
         $getQuiz = Quiz::where('id', Crypt::decryptString(Session::get('quizId')))->first();
@@ -38,8 +39,32 @@ class PlayerQuizController extends Controller {
 
     }
 
+    public function storeQuestion(Request $request) {
+        $data = Player::where('id', Session::get('idPlayer'))->update([
+            'score' => $request->score,
+            'status' => 1
+        ]);
+        if($data) {
+            return response()->json([
+                'succes' => true,
+                'id' => Session::get('idPlayer')
+            ], 200);
+        } else {
+            return response()->json([
+                'success' => false,
+                'id' => false,
+            ], 401);
+        }
+    }
+
     public function result() {
-        return view('frontend/result/index.blade.php');
+        if (Session::get('idPlayer') == null) {
+            return redirect('/');
+        }
+        Session::forget('token');
+        $data = Player::where('id', Session::get('idPlayer'))->first();
+        $quiz = Question::where('quiz_id', Crypt::decryptString(Session::get('quizId')))->where('status', 1)->count();
+        return view('frontend.result.index', compact(['data', 'quiz']));
     }
 
 }
