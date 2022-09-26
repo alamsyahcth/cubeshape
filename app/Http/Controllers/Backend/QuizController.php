@@ -159,7 +159,7 @@ class QuizController extends Controller {
 
     public function startQuiz($id) {
         $data = Quiz::where('id', Crypt::decryptString($id))->first();
-        $players = Player::where('quiz_id', Crypt::decryptString($id))->get();
+        $players = Player::where('quiz_id', Crypt::decryptString($id))->orderBy('score', 'DESC')->get();
         $page = $this->path;
         return view('backend.'.$this->role.'.'.$this->path.'.start', compact(['page', 'data', 'players']));
     }
@@ -168,6 +168,15 @@ class QuizController extends Controller {
         $data = Quiz::where('id', Crypt::decryptString($id))->update([
             'status' => 3,
             'time' => Carbon::now()
+        ]);
+        if($data) {
+            return $this->startQuiz($id);
+        }
+    }
+
+    public function stop($id) {
+        $data = Quiz::where('id', Crypt::decryptString($id))->update([
+            'status' => 4,
         ]);
         if($data) {
             return $this->startQuiz($id);

@@ -14,7 +14,10 @@
           </a>
         </div>
         <li class="{{ (request()->is('admin/quiz*')) ? 'active' : '' }}">
-          <a class="nav-link active" href="{{ url('admin/quiz/all') }}"><i class="fas fa-history"></i> Manage Quiz</a>
+          <a class="nav-link active" href="{{ url('admin/quiz/all') }}"><i class="fas fa-desktop"></i> Manage Quiz</a>
+        </li>
+        <li class="{{ (request()->is('admin/history*')) ? 'active' : '' }}">
+          <a class="nav-link active" href="{{ url('admin/history') }}"><i class="fas fa-history"></i> History</a>
         </li>
       @endif
 

@@ -18,7 +18,7 @@ io.on('connection', (socket) => {
   socket.on('setFinishQuizServer', (message) => {
     console.log(message);
 
-    io.sockets.emit('setFinishQuizServer', (message) => {
+    io.sockets.emit('setFinishQuizClient', (message) => {
       console.log(message);
     });
   })

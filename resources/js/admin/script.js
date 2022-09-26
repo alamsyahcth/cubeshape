@@ -1,3 +1,5 @@
+import Chart from 'chart.js/auto';
+
 let BASE_URL = window.location.origin;
 
 function startTimer(duration, display) {
@@ -15,6 +17,7 @@ function startTimer(duration, display) {
 
     if (--timer < 0) {
       actionSubmitQuiz();
+      redirectEndQuiz();
       clearInterval(interval);
       timer = 0;
     }
@@ -32,7 +35,7 @@ function quizStep() {
     stepsCount = $(".step").length,
     prevBtn = $(".prev"),
     nextBtn = $(".next"),
-    activeCount = 1;
+    activeCount = 1,
     flag = 1;
 
   prevBtn.click(function () {
@@ -101,6 +104,10 @@ function closeModal() {
   })
 }
 
+function redirectEndQuiz() {
+  window.location.replace($('#dataIdEndQuiz').val());
+}
+
 function handleOption() {
   $(".option").change(function () {
     $(".option").prop('checked', false);
@@ -144,11 +151,12 @@ $(document).on('click', '.edit-question',function(e) {
       });
     }
   })
-});
+}); 
 
 function handleCopyPIN() {
   $(document).on('click', '.btn-copy', function() {
-    value = $(this).data('pin');
+    console.log($(this).data('pin'))
+    let value = $(this).data('pin');
 
     var $temp = $("<input>");
     $("body").append($temp);
@@ -162,7 +170,7 @@ function actionSubmitQuiz() {
   let values = 0;
   let add = 0;
   
-  let ipAddress = '127.0.0.1';
+  let ipAddress = '192.168.232.101';
   let socketPort = '3000';
   let socket = io(ipAddress + ':' + socketPort);
 
@@ -201,8 +209,24 @@ function submitQuiz() {
   });
 }
 
+function endQuiz() {
+  let ipAddress = '192.168.232.101';
+  let socketPort = '3000';
+  let socket = io(ipAddress + ':' + socketPort);
+
+  $(document).on('click', '#endQuiz', function (e) {
+    e.preventDefault();
+    socket.emit('setFinishQuizServer', 'start quiz active');
+    window.location.replace($(this).data('url'));
+  });
+
+  socket.on('setFinishQuizClient', (message) => {
+    actionSubmitQuiz();
+  });
+}
+
 function socket() {
-  let ipAddress = '127.0.0.1';
+  let ipAddress = '192.168.232.101';
   let socketPort = '3000';
   let socket = io(ipAddress +':'+ socketPort);
 
@@ -220,6 +244,52 @@ function socket() {
   });
 }
 
+function chartClassement() {
+  let id = $('#dataIdUserClassement').val();
+  $.ajax({
+    method: 'get',
+    url: BASE_URL + '/admin/history/classement/' + id,
+    dataType: 'json',
+    success: function(res) {
+      let label = res.data.map((val, index) => {
+        return val.name
+      });
+      let score = res.data.map((val, index) => {
+        return val.score
+      });
+      const ctx = document.getElementById('classement').getContext('2d');
+      const myChart = new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: label,
+          datasets: [{
+            label: 'Top Three',
+            data: score,
+            backgroundColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+            ],
+            borderColor: [
+              'rgba(255, 99, 132, 1)',
+              'rgba(54, 162, 235, 1)',
+              'rgba(255, 206, 86, 1)',
+            ],
+            borderWidth: 1
+          }]
+        },
+        options: {
+          scales: {
+            y: {
+              beginAtZero: true
+            }
+          }
+        }
+      });
+    }
+  })
+}
+
 $(document).ready(function () {
   $('.step-1').addClass('active');
   $('.dataTable').DataTable();
@@ -230,4 +300,8 @@ $(document).ready(function () {
   submitQuiz();
   setActiveAnswer();
   socket();
+  endQuiz();
+  if (window.location.pathname === '/admin/history/' + $('#dataIdUserClassement').val()) {
+    chartClassement();
+  }
 });

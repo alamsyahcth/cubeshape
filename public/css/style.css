@@ -3703,3 +3703,7 @@ textarea {
 .btn.btn-start {
   font-size: 40px !important;
 }
+
+.btn-classement {
+  width: unset;
+}

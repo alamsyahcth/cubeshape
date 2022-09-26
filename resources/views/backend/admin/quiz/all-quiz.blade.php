@@ -70,13 +70,15 @@
                   @endif
                 </td>
                 <td>
-                  <a href="javascript:void(0)" class="btn text-primary" id="dropdownMenu" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
+                  @if($d->status == 1 || $d->status == 2)
+                    <a href="javascript:void(0)" class="btn text-primary" id="dropdownMenu" data-toggle="dropdown" aria-expanded="false"><i class="fas fa-ellipsis-v"></i></a>
+                  @endif
                   <div class="dropdown-menu dropdown-action" aria-labelledby="dropdownMenu">
                     @if($d->status == 2)
                       <a href="{{ url('admin/'.$page.'/questions/'.Crypt::encryptString($d->id)) }}" class="dropdown-item text-primary"><i class="fas fa-list"></i> Manage Quiestion</a>
                     @endif
-                    <a href="{{ url('admin/'.$page.'/'.$d->id) }}" class="dropdown-item text-primary"><i class="fas fa-edit"></i> Edit</a>
                     @if($d->status == 1 || $d->status == 2)
+                      <a href="{{ url('admin/'.$page.'/'.$d->id) }}" class="dropdown-item text-primary"><i class="fas fa-edit"></i> Edit</a>
                       <a href="{{ url('admin/'.$page.'/delete/'.$d->id) }}" class="dropdown-item text-primary"><i class="fas fa-trash"></i> Delete</a>
                     @endif
                   </div>
